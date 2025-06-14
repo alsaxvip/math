@@ -28,6 +28,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Function to parse CSV data
     async function fetchAndParseCSV() {
+        // Tampilkan loading saat mulai mengambil data
+        loginSection.classList.add('hidden'); // Sembunyikan form login sementara
+        loadingElement.classList.remove('hidden'); // Tampilkan pesan loading
+
         try {
             const response = await fetch(csvUrl);
             if (!response.ok) {
@@ -39,6 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (lines.length < 2) {
                 console.error("CSV data is too short or malformed.");
                 loadingElement.textContent = "Gagal memuat data: Data tidak ditemukan atau tidak valid.";
+                loadingElement.style.color = 'var(--red)';
                 return;
             }
 
@@ -54,11 +59,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 return row;
             });
             
-            // console.log("CSV Headers:", csvHeaders); // For debugging
-            // console.log("Parsed Student Data:", studentData); // For debugging
+            console.log("CSV Headers:", csvHeaders); // Debugging
+            console.log("Parsed Student Data:", studentData); // Debugging
 
-            loadingElement.classList.add('hidden');
-            loginSection.classList.remove('hidden'); // Show login section after data is loaded
+            loadingElement.classList.add('hidden'); // Sembunyikan loading
+            loginSection.classList.remove('hidden'); // Tampilkan kembali form login
 
         } catch (error) {
             console.error("Error fetching or parsing CSV:", error);
@@ -78,10 +83,16 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function displayStudentGrades(nisn) {
+        // Pastikan studentData sudah dimuat sebelum mencari
+        if (studentData.length === 0) {
+            alert('Data nilai belum dimuat. Mohon tunggu sebentar lalu coba lagi.');
+            return;
+        }
+
         const student = studentData.find(s => s.NISN === nisn);
 
         if (student) {
-            // Hide login, show student info and grades
+            // Sembunyikan login, tampilkan info siswa dan nilai
             loginSection.classList.add('hidden');
             studentInfoSection.classList.remove('hidden');
             gradesTableContainer.classList.remove('hidden');
@@ -91,21 +102,9 @@ document.addEventListener('DOMContentLoaded', () => {
             kelasSpan.textContent = student.KELAS || '-';
             predikatSpan.textContent = student.PREDIKAT || '-';
 
-            gradesTableBody.innerHTML = ''; // Clear previous data
+            gradesTableBody.innerHTML = ''; // Hapus data sebelumnya
 
-            // Find the starting index for grade values (column E is index 4 in 0-indexed array)
-            // Assuming the order of columns after 'PREDIKAT' directly maps to `aspectMapping`
-            const firstGradeColumnIndex = csvHeaders.indexOf('LKS BAB 1'); // Assuming 'LKS BAB 1' is the first grade column. Adjust if different.
-            if (firstGradeColumnIndex === -1) {
-                // Fallback: If 'LKS BAB 1' not found as a header, assume it starts after the first 4 fixed columns
-                // This is less robust but might work if headers are not exact match but order is fixed.
-                console.warn("Header 'LKS BAB 1' not found. Assuming grade data starts from 5th column.");
-                // This means the index 4 (E) is LKS BAB 1, 5 (F) is LKS BAB 2, etc.
-                // We will use `aspectMapping` to get the value by position in `student` object (which is an object of key-value pairs).
-                // It's better to rely on actual CSV headers. Let's make sure the `csvHeaders` capture the exact names.
-            }
-
-            aspectMapping.forEach((aspect, index) => {
+            aspectMapping.forEach(aspect => {
                 const row = gradesTableBody.insertRow();
                 const aspectCell = row.insertCell(0);
                 const valueCell = row.insertCell(1);
@@ -113,25 +112,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 aspectCell.textContent = aspect;
 
                 let gradeValue = '';
-                // Get the actual CSV header name for this aspect
-                // This assumes the order of `aspectMapping` matches the order of grade columns in CSV.
-                // If CSV headers are exactly like `aspectMapping` items, we can directly use `student[aspect]`.
-                // If not, we need to map the `aspectMapping` items to specific CSV column names.
-                // Given the prompt, let's assume the CSV headers *are* the aspect names provided.
+                // Asumsi: Header kolom di CSV persis sama dengan `aspectMapping`
+                // Atau, jika tidak, kita perlu indeks kolom yang akurat dari `csvHeaders`
+                gradeValue = student[aspect]; 
                 
-                gradeValue = student[aspect]; // Direct lookup by aspect name (assuming exact header match)
-
                 if (gradeValue !== undefined && gradeValue !== null && gradeValue !== '') {
                     const parsedValue = parseFloat(gradeValue);
                     if (!isNaN(parsedValue)) {
                         valueCell.textContent = Math.round(parsedValue);
                     } else {
-                        valueCell.textContent = '-'; // Not a number, display as empty
-                        row.classList.add('incorrect-row'); // Highlight if value is not a valid number
+                        valueCell.textContent = '-'; // Bukan angka, tampilkan sebagai kosong
+                        row.classList.add('incorrect-row'); // Highlight jika nilai tidak valid
                     }
                 } else {
-                    valueCell.textContent = '-'; // Display '-' for empty values
-                    row.classList.add('incorrect-row'); // Highlight if value is missing
+                    valueCell.textContent = '-'; // Tampilkan '-' untuk nilai yang kosong
+                    row.classList.add('incorrect-row'); // Highlight jika nilai hilang
                 }
 
                 if (highlightYellowRows.includes(aspect)) {
@@ -144,6 +139,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Initial data fetch when the page loads
+    // Panggil fungsi pengambilan data saat halaman dimuat
     fetchAndParseCSV();
 });
