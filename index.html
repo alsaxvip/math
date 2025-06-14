@@ -131,8 +131,9 @@
             background-color: var(--light-red) !important;
         }
 
-        .highlight-row {
+        .highlight-yellow {
             background-color: var(--yellow) !important;
+            font-weight: bold;
         }
 
         #loading {
@@ -151,203 +152,195 @@
         </header>
 
         <section id="login-section">
-            <input type="text" id="nisn-input" placeholder="Masukkan NISN Anda">
+            <input type="text" id="nisn-input" placeholder="Masukkan NISN">
             <button id="search-button">Cari Nilai</button>
+            <p id="error-message" style="color: var(--red); margin-top: 10px;" class="hidden"></p>
         </section>
 
-        <section id="loading">Memuat data nilai...</section>
+        <section id="loading" class="hidden">
+            Memuat data...
+        </section>
 
         <section id="student-info" class="hidden">
             <div class="info-item">
-                <strong>NAMA LENGKAP:</strong> <span id="nama-lengkap"></span>
+                <strong>NAMA LENGKAP:</strong> <span id="student-name"></span>
             </div>
             <div class="info-item">
-                <strong>NISN:</strong> <span id="nisn"></span>
+                <strong>NISN:</strong> <span id="student-nisn"></span>
             </div>
             <div class="info-item">
-                <strong>KELAS:</strong> <span id="kelas"></span>
+                <strong>KELAS:</strong> <span id="student-class"></span>
             </div>
             <div class="info-item">
-                <strong>PREDIKAT:</strong> <span id="predikat"></span>
+                <strong>PREDIKAT:</strong> <span id="student-predicate"></span>
             </div>
         </section>
 
-        <section id="score-table-section" class="hidden">
-            <table>
+        <section id="grades-section" class="hidden">
+            <table id="grades-table">
                 <thead>
                     <tr>
                         <th>ASPEK PENILAIAN</th>
                         <th>NILAI</th>
                     </tr>
                 </thead>
-                <tbody id="score-table-body">
+                <tbody>
                     </tbody>
             </table>
         </section>
     </div>
 
     <script>
-        const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRs-RK5zrgpKBUJAKD6pCXmLAfqWgHDSyzY9rgAJMFnvzyO-iyyFRlqVKnhUQQlzX_/pub?gid=1829383988&single=true&output=csv';
+        const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRs-RK5zrgpKBUJAKD6pCXmLAfqWgHDSyzY9rgAJMFnvzyO-iyyFRlqVKnhUQQlzJp_pPAAbJFQljX_/pub?gid=1829383988&single=true&output=csv';
         let studentData = [];
 
         const nisnInput = document.getElementById('nisn-input');
         const searchButton = document.getElementById('search-button');
         const loadingSection = document.getElementById('loading');
         const studentInfoSection = document.getElementById('student-info');
-        const scoreTableSection = document.getElementById('score-table-section');
-        const namaLengkapSpan = document.getElementById('nama-lengkap');
-        const nisnSpan = document.getElementById('nisn');
-        const kelasSpan = document.getElementById('kelas');
-        const predikatSpan = document.getElementById('predikat');
-        const scoreTableBody = document.getElementById('score-table-body');
+        const gradesSection = document.getElementById('grades-section');
+        const gradesTableBody = document.querySelector('#grades-table tbody');
+        const errorMessage = document.getElementById('error-message');
 
-        const aspekPenilaian = [
-            "LKS BAB 1", "LKS BAB 2", "LKS BAB 3",
-            "CATATAN TUGAS BAB 1", "CATATAN TUGAS BAB 2", "CATATAN TUGAS BAB 3",
-            "KETERAMPILAN BAB 1", "KETERAMPILAN BAB 2", "KETERAMPILAN BAB 3",
-            "ATS LKS", "ATS ASLI", "ATS PERBAIKAN 25 SOAL",
-            "AAS LKS", "AAS ASLI",
-            "PENILAIAN HARIAN", "NILAI AKHIR ATS", "NILAI AKHIR AAS"
+        // Student Info elements
+        const studentName = document.getElementById('student-name');
+        const studentNisn = document.getElementById('student-nisn');
+        const studentClass = document.getElementById('student-class');
+        const studentPredicate = document.getElementById('student-predicate');
+
+        // Mapping for assessment aspects and their corresponding column indices (0-indexed)
+        // Assuming columns A-D for student info, E onwards for grades
+        const assessmentAspects = [
+            { label: 'LKS BAB 1', colIndex: 4 },
+            { label: 'LKS BAB 2', colIndex: 5 },
+            { label: 'LKS BAB 3', colIndex: 6 },
+            { label: 'CATATAN TUGAS BAB 1', colIndex: 7 },
+            { label: 'CATATAN TUGAS BAB 2', colIndex: 8 },
+            { label: 'CATATAN TUGAS BAB 3', colIndex: 9 },
+            { label: 'KETERAMPILAN BAB 1', colIndex: 10 },
+            { label: 'KETERAMPILAN BAB 2', colIndex: 11 },
+            { label: 'KETERAMPILAN BAB 3', colIndex: 12 },
+            { label: 'ATS LKS', colIndex: 13 },
+            { label: 'ATS ASLI', colIndex: 14 },
+            { label: 'ATS PERBAIKAN 25 SOAL', colIndex: 15 },
+            { label: 'AAS LKS', colIndex: 16 },
+            { label: 'AAS ASLI', colIndex: 17 },
+            { label: 'PENILAIAN HARIAN', colIndex: 18, highlight: 'yellow' },
+            { label: 'NILAI AKHIR ATS', colIndex: 19, highlight: 'yellow' },
+            { label: 'NILAI AKHIR AAS', colIndex: 20, highlight: 'yellow' }
         ];
 
-        // Map aspek penilaian to CSV column indices (0-indexed)
-        // Assuming:
-        // NAMA LENGKAP: Column B (index 1)
-        // NISN: Column C (index 2)
-        // KELAS: Column D (index 3)
-        // Scores start from Column E (index 4)
-        // PREDIKAT: Column P (index 15)
-        const scoreColumnMap = {
-            "LKS BAB 1": 4,
-            "LKS BAB 2": 5,
-            "LKS BAB 3": 6,
-            "CATATAN TUGAS BAB 1": 7,
-            "CATATAN TUGAS BAB 2": 8,
-            "CATATAN TUGAS BAB 3": 9,
-            "KETERAMPILAN BAB 1": 10,
-            "KETERAMPILAN BAB 2": 11,
-            "KETERAMPILAN BAB 3": 12,
-            "ATS LKS": 13,
-            "ATS ASLI": 14,
-            "ATS PERBAIKAN 25 SOAL": 15, // P
-            "AAS LKS": 16, // Q
-            "AAS ASLI": 17, // R
-            "PENILAIAN HARIAN": 18, // S
-            "NILAI AKHIR ATS": 19, // T
-            "NILAI AKHIR AAS": 20  // U
-        };
-
-        async function loadData() {
+        async function fetchCSVData() {
             loadingSection.classList.remove('hidden');
             try {
-                const response = await fetch(csvUrl);
-                const csvText = await response.text();
-                studentData = parseCsv(csvText);
-                loadingSection.classList.add('hidden');
-            } catch (error) {
-                console.error("Error loading CSV data:", error);
-                loadingSection.textContent = "Gagal memuat data. Silakan coba lagi nanti.";
-            }
-        }
-
-        function parseCsv(csv) {
-            const lines = csv.split('\n');
-            const data = [];
-            // Assuming header is in row 1 (index 0 in split array) and data starts from row 2 (index 1)
-            for (let i = 1; i < lines.length; i++) {
-                const line = lines[i].trim();
-                if (line) {
-                    // Split by comma, but handle commas within quoted fields
-                    const values = [];
-                    let inQuote = false;
-                    let currentField = '';
-                    for (let j = 0; j < line.length; j++) {
-                        const char = line[j];
-                        if (char === '"') {
-                            inQuote = !inQuote;
-                        } else if (char === ',' && !inQuote) {
-                            values.push(currentField.trim());
-                            currentField = '';
-                        } else {
-                            currentField += char;
-                        }
-                    }
-                    values.push(currentField.trim()); // Add the last field
-                    data.push(values);
+                const response = await fetch(CSV_URL);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
+                const csvText = await response.text();
+                parseCSV(csvText);
+            } catch (error) {
+                console.error('Error fetching CSV:', error);
+                errorMessage.textContent = 'Gagal memuat data nilai. Silakan coba lagi nanti.';
+                errorMessage.classList.remove('hidden');
+            } finally {
+                loadingSection.classList.add('hidden');
             }
-            return data;
         }
 
-        function searchScore() {
-            const nisnToSearch = nisnInput.value.trim();
-            if (!nisnToSearch) {
-                alert("Mohon masukkan NISN.");
+        function parseCSV(csv) {
+            const lines = csv.split('\n').filter(line => line.trim() !== ''); // Filter out empty lines
+            if (lines.length < 2) {
+                errorMessage.textContent = 'Data CSV tidak valid (kurang dari 2 baris).';
+                errorMessage.classList.remove('hidden');
                 return;
             }
 
-            const foundStudent = studentData.find(row => row[2] === nisnToSearch); // Assuming NISN is at index 2 (Column C)
+            const headers = lines[0].split(','); // Row 1 is header
+            studentData = [];
+            for (let i = 1; i < lines.length; i++) { // Row 2 onwards are data
+                const values = lines[i].split(',');
+                if (values.length >= 21) { // Ensure enough columns
+                    studentData.push({
+                        'NAMA LENGKAP': values[0].trim(),
+                        'NISN': values[1].trim(),
+                        'KELAS': values[2].trim(),
+                        'PREDIKAT': values[3].trim(),
+                        'grades': values.slice(4).map(val => val.trim()) // Grades start from column E (index 4)
+                    });
+                }
+            }
+            console.log('Parsed Student Data:', studentData);
+        }
 
-            if (foundStudent) {
-                namaLengkapSpan.textContent = foundStudent[1] || '-'; // Column B
-                nisnSpan.textContent = foundStudent[2] || '-'; // Column C
-                kelasSpan.textContent = foundStudent[3] || '-'; // Column D
-                predikatSpan.textContent = foundStudent[15] || '-'; // Column P
+        function displayStudentGrades(nisn) {
+            const student = studentData.find(s => s.NISN === nisn);
 
+            if (student) {
+                errorMessage.classList.add('hidden');
                 studentInfoSection.classList.remove('hidden');
-                scoreTableSection.classList.remove('hidden');
-                populateScoreTable(foundStudent);
+                gradesSection.classList.remove('hidden');
+
+                studentName.textContent = student['NAMA LENGKAP'];
+                studentNisn.textContent = student.NISN;
+                studentClass.textContent = student.KELAS;
+                studentPredicate.textContent = student.PREDIKAT;
+
+                gradesTableBody.innerHTML = ''; // Clear previous data
+
+                assessmentAspects.forEach(aspect => {
+                    const row = gradesTableBody.insertRow();
+                    const aspectCell = row.insertCell();
+                    const valueCell = row.insertCell();
+
+                    aspectCell.textContent = aspect.label;
+
+                    const grade = student.grades[aspect.colIndex - 4]; // Adjust index because 'grades' array starts from column E (index 4 in original CSV)
+                    let displayValue = '';
+
+                    if (grade === undefined || grade === null || grade === '') {
+                        displayValue = 'N/A';
+                        row.classList.add('incorrect-row');
+                    } else {
+                        try {
+                            displayValue = Math.round(parseFloat(grade)).toString();
+                            if (isNaN(parseFloat(grade))) {
+                                displayValue = 'N/A';
+                                row.classList.add('incorrect-row');
+                            }
+                        } catch (e) {
+                            displayValue = 'N/A';
+                            row.classList.add('incorrect-row');
+                        }
+                    }
+                    valueCell.textContent = displayValue;
+
+                    if (aspect.highlight === 'yellow') {
+                        row.classList.add('highlight-yellow');
+                    }
+                });
             } else {
-                alert("NISN tidak ditemukan. Mohon periksa kembali.");
                 studentInfoSection.classList.add('hidden');
-                scoreTableSection.classList.add('hidden');
+                gradesSection.classList.add('hidden');
+                errorMessage.textContent = 'NISN tidak ditemukan. Pastikan NISN yang dimasukkan benar.';
+                errorMessage.classList.remove('hidden');
             }
         }
 
-        function populateScoreTable(studentRow) {
-            scoreTableBody.innerHTML = ''; // Clear previous data
-
-            aspekPenilaian.forEach(aspek => {
-                const row = document.createElement('tr');
-                const nilaiIndex = scoreColumnMap[aspek];
-                let nilai = studentRow[nilaiIndex];
-
-                let isInvalid = false;
-                if (nilai === undefined || nilai === null || nilai.trim() === '' || isNaN(parseFloat(nilai))) {
-                    nilai = "-"; // Display dash for empty or invalid values
-                    isInvalid = true;
-                } else {
-                    nilai = Math.round(parseFloat(nilai)); // Round to nearest integer
-                }
-
-                const aspekCell = document.createElement('td');
-                aspekCell.textContent = aspek;
-                row.appendChild(aspekCell);
-
-                const nilaiCell = document.createElement('td');
-                nilaiCell.textContent = nilai;
-                row.appendChild(nilaiCell);
-
-                if (isInvalid) {
-                    row.classList.add('incorrect-row');
-                }
-
-                if (aspek === "PENILAIAN HARIAN" || aspek === "NILAI AKHIR ATS" || aspek === "NILAI AKHIR AAS") {
-                    row.classList.add('highlight-row');
-                }
-
-                scoreTableBody.appendChild(row);
-            });
-        }
-
-        // Event Listeners
-        document.addEventListener('DOMContentLoaded', loadData);
-        searchButton.addEventListener('click', searchScore);
-        nisnInput.addEventListener('keypress', function(event) {
-            if (event.key === 'Enter') {
-                searchScore();
+        searchButton.addEventListener('click', () => {
+            const nisn = nisnInput.value.trim();
+            if (nisn) {
+                displayStudentGrades(nisn);
+            } else {
+                errorMessage.textContent = 'Silakan masukkan NISN.';
+                errorMessage.classList.remove('hidden');
+                studentInfoSection.classList.add('hidden');
+                gradesSection.classList.add('hidden');
             }
         });
+
+        // Fetch data when the page loads
+        fetchCSVData();
     </script>
 </body>
 </html>
