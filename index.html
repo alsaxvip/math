@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NILAI MATEMATIKA</title>
+    <title>Nilai Matematika</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -13,7 +13,6 @@
             --red: #F44336;
             --light-red: #FFCDD2; /* Lighter red for highlighting */
             --light-grey: #f2f2f2;
-            --highlight-blue: #00FFFF;
         }
 
         body {
@@ -25,7 +24,7 @@
         }
 
         .container {
-            max-width: 1200px; /* Increased max-width for better table display */
+            max-width: 900px;
             margin: 0 auto;
             background-color: var(--white);
             padding: 30px;
@@ -55,7 +54,7 @@
             margin-bottom: 30px;
         }
 
-        #login-section input {
+        #login-section input[type="text"] {
             padding: 10px 15px;
             border: 1px solid #ccc;
             border-radius: 5px;
@@ -79,7 +78,7 @@
         }
 
         #student-info {
-            display: none; /* Hidden by default */
+            display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
             margin-bottom: 30px;
@@ -110,7 +109,7 @@
 
         table th, table td {
             border: 1px solid #ddd;
-            padding: 8px; /* Reduced padding for better fit */
+            padding: 12px;
             text-align: center;
         }
 
@@ -118,11 +117,6 @@
             background-color: var(--green);
             color: var(--white);
             text-transform: uppercase;
-            font-size: 0.9em; /* Slightly smaller font for better fit */
-        }
-
-        table td {
-            font-size: 0.9em;
         }
 
         table tr:nth-child(even) {
@@ -133,16 +127,12 @@
             background-color: #f1f1f1;
         }
 
-        .highlight-blue {
-            background-color: var(--highlight-blue) !important;
-        }
-
-        .highlight-red {
+        .incorrect-row {
             background-color: var(--light-red) !important;
         }
 
-        #nilai-table-container {
-            overflow-x: auto; /* Enable horizontal scrolling for smaller screens */
+        .highlight-yellow {
+            background-color: var(--yellow) !important;
         }
 
         #loading {
@@ -156,159 +146,49 @@
 <body>
     <div class="container">
         <header>
-            <img src="https://iili.io/FqqmPFp.png" alt="Logo Sekolah">
+            <img src="https://iili.io/FqqmPFp.png" alt="School Logo">
             <h1>NILAI MATEMATIKA</h1>
         </header>
 
         <section id="login-section">
-            <input type="text" id="nisn" placeholder="Masukkan NISN">
-            <button onclick="ambilData()">Lihat Nilai</button>
+            <input type="text" id="nisn-input" placeholder="Masukkan NISN Anda">
+            <button id="login-button">Login</button>
+            <p id="login-message" style="color: var(--red); margin-top: 10px;"></p>
         </section>
 
-        <section id="student-info" class="hidden">
-            <div class="info-item"><strong>NAMA LENGKAP : </strong> <span id="nama-lengkap"></span></div>
-            <div class="info-item"><strong>NISN : </strong> <span id="nisn-info"></span></div>
-            <div class="info-item"><strong>KELAS : </strong> <span id="kelas"></span></div>
-            <div class="info-item"><strong>PREDIKAT : </strong> <span id="predikat"></span></div>
+        <section id="student-dashboard" class="hidden">
+            <div id="student-info">
+                <div class="info-item">
+                    <strong>NAMA LENGKAP:</strong> <span id="nama-lengkap"></span>
+                </div>
+                <div class="info-item">
+                    <strong>NISN:</strong> <span id="nisn"></span>
+                </div>
+                <div class="info-item">
+                    <strong>KELAS:</strong> <span id="kelas"></span>
+                </div>
+                <div class="info-item">
+                    <strong>PREDIKAT:</strong> <span id="predikat"></span>
+                </div>
+            </div>
+
+            <div id="grades-table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ASPEK PENILAIAN</th>
+                            <th>NILAI</th>
+                        </tr>
+                    </thead>
+                    <tbody id="grades-table-body">
+                        </tbody>
+                </table>
+            </div>
         </section>
 
-        <section id="nilai-table-container" class="hidden">
-            <table id="nilai-table">
-                <thead>
-                    <tr>
-                        <th>ASPEK PENILAIAN</th>
-                        <th>NILAI</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><th>1</th><td>LKS BAB 1</td><td data-nilai-row="1"></td></tr>
-                    <tr><th>2</th><td>LKS BAB 2</td><td data-nilai-row="2"></td></tr>
-                    <tr><th>3</th><td>LKS BAB 3</td><td data-nilai-row="3"></td></tr>
-                    <tr><th>4</th><td>CATATAN TUGAS BAB 1</td><td data-nilai-row="4"></td></tr>
-                    <tr><th>5</th><td>CATATAN TUGAS BAB 2</td><td data-nilai-row="5"></td></tr>
-                    <tr><th>6</th><td>CATATAN TUGAS BAB 3</td><td data-nilai-row="6"></td></tr>
-                    <tr><th>7</th><td>KETERAMPILAN BAB 1</td><td data-nilai-row="7"></td></tr>
-                    <tr><th>8</th><td>KETERAMPILAN BAB 2</td><td data-nilai-row="8"></td></tr>
-                    <tr><th>9</th><td>KETERAMPILAN BAB 3</td><td data-nilai-row="9"></td></tr>
-                    <tr><th>10</th><td>ATS LKS</td><td data-nilai-row="10"></td></tr>
-                    <tr><th>11</th><td>ATS ASLI</td><td data-nilai-row="11"></td></tr>
-                    <tr><th>12</th><td>ATS PERBAIKAN 25 SOAL</td><td data-nilai-row="12"></td></tr>
-                    <tr><th>13</th><td>AAS LKS</td><td data-nilai-row="13"></td></tr>
-                    <tr><th>14</th><td>AAS ASLI</td><td data-nilai-row="14"></td></tr>
-                    <tr class="highlight-blue"><th>15</th><td>PENILAIAN HARIAN</td><td data-nilai-row="15"></td></tr>
-                    <tr class="highlight-blue"><th>16</th><td>NILAI AKHIR ATS</td><td data-nilai-row="16"></td></tr>
-                    <tr class="highlight-blue"><th>17</th><td>NILAI AKHIR AAS</td><td data-nilai-row="17"></td></tr>
-                </tbody>
-            </table>
-        </section>
-
-        <div id="loading" class="hidden">Sedang memuat data...</div>
+        <div id="loading" class="hidden">Memuat data...</div>
     </div>
 
-    <script>
-        const spreadsheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRs-RK5zrgpKBUJAKD6pCXmLAfqWgHDSyzY9rgAJMFnvzyO-iyyFRlqVKnhUQQlzJp_pPAAbJFQljX_/pub?gid=1829383988&single=true&output=csv'; // Pastikan ini adalah URL 'publish to web' Anda
-        const headerRow = 1; // Baris header berada di baris pertama spreadsheet
-        const dataStartRow = 2; // Data dimulai dari baris kedua spreadsheet
-        const nilaiColumnIndex = 4; // Kolom E adalah indeks 4 (A=0, B=1, C=2, D=3, E=4)
-
-        async function ambilData() {
-            const nisnInput = document.getElementById('nisn');
-            const nisn = nisnInput.value.trim();
-
-            if (!nisn) {
-                alert('Silakan masukkan NISN.');
-                return;
-            }
-
-            // Sembunyikan semua section dan tampilkan loading
-            document.getElementById('login-section').classList.add('hidden');
-            document.getElementById('loading').classList.remove('hidden');
-            document.getElementById('student-info').classList.add('hidden');
-            document.getElementById('nilai-table-container').classList.add('hidden');
-
-            try {
-                const response = await fetch(spreadsheetUrl);
-                // Cek apakah respons OK (status 200)
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const csvData = await response.text();
-                // Memisahkan baris dan kolom. Menghapus baris kosong di akhir.
-                const rows = csvData.split('\n').filter(row => row.trim() !== '').map(row => row.split(','));
-
-                if (rows.length < headerRow) {
-                    alert('Data spreadsheet tidak valid atau kosong.');
-                    document.getElementById('loading').classList.add('hidden');
-                    document.getElementById('login-section').classList.remove('hidden');
-                    return; // Keluar dari fungsi
-                }
-
-                // Ambil header dari baris yang ditentukan
-                const headers = rows[headerRow - 1].map(header => header.trim());
-
-                // Pastikan indeks kolom ditemukan
-                const nisnColumnIndex = headers.indexOf('NISN');
-                const namaColumnIndex = headers.indexOf('NAMA LENGKAP');
-                const kelasColumnIndex = headers.indexOf('KELAS');
-                const predikatColumnIndex = headers.indexOf('PREDIKAT');
-
-                if (nisnColumnIndex === -1 || namaColumnIndex === -1 || kelasColumnIndex === -1 || predikatColumnIndex === -1) {
-                    alert('Kolom NAMA LENGKAP, NISN, KELAS, atau PREDIKAT tidak ditemukan di header spreadsheet. Pastikan penulisan sesuai.');
-                    document.getElementById('loading').classList.add('hidden');
-                    document.getElementById('login-section').classList.remove('hidden');
-                    return;
-                }
-
-                let studentData = null;
-                // Mulai pencarian dari dataStartRow
-                for (let i = dataStartRow - 1; i < rows.length; i++) {
-                    const rowData = rows[i];
-                    if (rowData && rowData[nisnColumnIndex] && rowData[nisnColumnIndex].trim() === nisn) {
-                        studentData = rowData;
-                        break;
-                    }
-                }
-
-                // Sembunyikan loading setelah data diproses
-                document.getElementById('loading').classList.add('hidden');
-
-                if (studentData) {
-                    // Tampilkan info siswa
-                    document.getElementById('student-info').classList.remove('hidden');
-                    document.getElementById('nilai-table-container').classList.remove('hidden');
-
-                    document.getElementById('nama-lengkap').textContent = studentData[namaColumnIndex] || '-';
-                    document.getElementById('nisn-info').textContent = studentData[nisnColumnIndex] || '-';
-                    document.getElementById('kelas').textContent = studentData[kelasColumnIndex] || '-';
-                    document.getElementById('predikat').textContent = studentData[predikatColumnIndex] || '-';
-
-                    // Isi tabel nilai dari kolom E (indeks 4)
-                    const nilaiTds = document.querySelectorAll('#nilai-table tbody td[data-nilai-row]');
-                    nilaiTds.forEach(td => {
-                        const rowIndexInSpreadsheet = parseInt(td.dataset.nilaiRow); // Ini adalah nomor baris data nilai di spreadsheet (misal, 1 untuk LKS BAB 1)
-                        
-                        // Kolom E (indeks 4) dari setiap baris data siswa yang ditemukan
-                        const nilai = studentData[nilaiColumnIndex + (rowIndexInSpreadsheet -1)]; // Ambil nilai dari kolom E
-
-                        if (nilai !== undefined && nilai.trim() !== '') {
-                            td.textContent = Math.round(parseFloat(nilai));
-                            td.classList.remove('highlight-red'); // Hapus highlight jika ada nilai
-                        } else {
-                            td.textContent = '-'; // Tampilkan '-' jika nilai kosong atau tidak ada
-                            td.classList.add('highlight-red'); // Beri highlight merah
-                        }
-                    });
-                } else {
-                    alert(`NISN "${nisn}" tidak ditemukan dalam data.`);
-                    document.getElementById('login-section').classList.remove('hidden'); // Tampilkan kembali login
-                }
-
-            } catch (error) {
-                console.error('Error fetching or processing data:', error);
-                alert('Terjadi kesalahan saat mengambil atau memproses data. Mohon cek koneksi internet atau pastikan spreadsheet sudah dipublikasikan dengan benar.');
-                document.getElementById('login-section').classList.remove('hidden'); // Tampilkan kembali login
-            }
-        }
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
