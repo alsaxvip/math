@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRs-RK5zrgpKBUJAKD6pCXmLAfqWgHDSyzY9rgAJMFnvzyO-iyyFRlqVKnhUQQlzJp_pPAAbJFQljX_/pub?gid=1829383988&single=true&output=csv';
+    const csvUrl = 'https://docs.google.com/sheets/d/e/2PACX-1vRs-RK5zrgpKBUJAKD6pCXmLAfqWgHDSyzY9rgAJMFnvzyO-iyyFRlqVKnhUQQlzJp_pPAAbJFQljX_/pub?gid=1829383988&single=true&output=csv';
     let studentData = [];
-    let csvHeaders = []; // To store the actual headers from the CSV
+    let csvHeaders = [];
 
     const loadingElement = document.getElementById('loading');
     const loginSection = document.getElementById('login-section');
@@ -26,11 +26,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const highlightYellowRows = ["PENILAIAN HARIAN", "NILAI AKHIR ATS", "NILAI AKHIR AAS"];
 
-    // Function to parse CSV data
     async function fetchAndParseCSV() {
-        // Tampilkan loading saat mulai mengambil data
-        loginSection.classList.add('hidden'); // Sembunyikan form login sementara
-        loadingElement.classList.remove('hidden'); // Tampilkan pesan loading
+        loginSection.classList.add('hidden');
+        loadingElement.classList.remove('hidden');
+        loadingElement.textContent = "Memuat data..."; // Pastikan teks loading muncul
 
         try {
             const response = await fetch(csvUrl);
@@ -38,6 +37,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const text = await response.text();
+            console.log("--- DEBUG: RAW CSV TEXT ---");
+            console.log(text.substring(0, 500) + '...'); // Log hanya 500 karakter pertama
+            console.log("--- END RAW CSV TEXT ---");
+            
             const lines = text.split('\n').map(line => line.trim()).filter(line => line.length > 0);
 
             if (lines.length < 2) {
@@ -47,23 +50,29 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Capture actual CSV headers
+            // Capture actual CSV headers and ensure trimming
             csvHeaders = lines[0].split(',').map(header => header.trim());
+            console.log("--- DEBUG: Parsed CSV Headers ---");
+            console.log(csvHeaders); // Log semua header
+            console.log("--- END Parsed CSV Headers ---");
             
             studentData = lines.slice(1).map(line => {
                 const values = line.split(',');
                 let row = {};
                 csvHeaders.forEach((header, index) => {
+                    // Ensure values are also trimmed
                     row[header] = values[index] ? values[index].trim() : '';
                 });
                 return row;
             });
             
-            console.log("CSV Headers:", csvHeaders); // Debugging
-            console.log("Parsed Student Data:", studentData); // Debugging
+            console.log("--- DEBUG: Sample Student Data (first 3) ---");
+            console.log(studentData.slice(0, 3)); // Log 3 data siswa pertama
+            console.log("Total students loaded:", studentData.length);
+            console.log("--- END Sample Student Data ---");
 
-            loadingElement.classList.add('hidden'); // Sembunyikan loading
-            loginSection.classList.remove('hidden'); // Tampilkan kembali form login
+            loadingElement.classList.add('hidden');
+            loginSection.classList.remove('hidden');
 
         } catch (error) {
             console.error("Error fetching or parsing CSV:", error);
@@ -72,9 +81,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Login functionality
     loginButton.addEventListener('click', () => {
         const nisn = nisnInput.value.trim();
+        console.log("--- DEBUG: NISN entered by user ---");
+        console.log(`'${nisn}' (length: ${nisn.length})`); // Log NISN yang dimasukkan dan panjangnya
+        console.log("--- END NISN entered ---");
+
         if (nisn) {
             displayStudentGrades(nisn);
         } else {
@@ -83,26 +95,40 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function displayStudentGrades(nisn) {
-        // Pastikan studentData sudah dimuat sebelum mencari
         if (studentData.length === 0) {
             alert('Data nilai belum dimuat. Mohon tunggu sebentar lalu coba lagi.');
             return;
         }
+        
+        let studentFound = false;
+        let foundStudent = null;
 
-        const student = studentData.find(s => s.NISN === nisn);
+        for (const student of studentData) {
+            // Ini akan membandingkan string. Pastikan tidak ada karakter tak terlihat.
+            if (student.NISN === nisn) {
+                studentFound = true;
+                foundStudent = student;
+                break; // Hentikan pencarian jika sudah ditemukan
+            }
+        }
+        
+        console.log("--- DEBUG: Student find result ---");
+        console.log("Student found (true/false):", studentFound);
+        console.log("Found student object (or null):", foundStudent);
+        console.log("--- END Student find result ---");
 
-        if (student) {
-            // Sembunyikan login, tampilkan info siswa dan nilai
+
+        if (studentFound) {
             loginSection.classList.add('hidden');
             studentInfoSection.classList.remove('hidden');
             gradesTableContainer.classList.remove('hidden');
 
-            namaLengkapSpan.textContent = student['NAMA LENGKAP'] || '-';
-            nisnSpan.textContent = student.NISN || '-';
-            kelasSpan.textContent = student.KELAS || '-';
-            predikatSpan.textContent = student.PREDIKAT || '-';
+            namaLengkapSpan.textContent = foundStudent['NAMA LENGKAP'] || '-';
+            nisnSpan.textContent = foundStudent.NISN || '-';
+            kelasSpan.textContent = foundStudent.KELAS || '-';
+            predikatSpan.textContent = foundStudent.PREDIKAT || '-';
 
-            gradesTableBody.innerHTML = ''; // Hapus data sebelumnya
+            gradesTableBody.innerHTML = '';
 
             aspectMapping.forEach(aspect => {
                 const row = gradesTableBody.insertRow();
@@ -111,34 +137,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 aspectCell.textContent = aspect;
 
-                let gradeValue = '';
-                // Asumsi: Header kolom di CSV persis sama dengan `aspectMapping`
-                // Atau, jika tidak, kita perlu indeks kolom yang akurat dari `csvHeaders`
-                gradeValue = student[aspect]; 
+                let gradeValue = foundStudent[aspect]; 
                 
                 if (gradeValue !== undefined && gradeValue !== null && gradeValue !== '') {
                     const parsedValue = parseFloat(gradeValue);
                     if (!isNaN(parsedValue)) {
                         valueCell.textContent = Math.round(parsedValue);
                     } else {
-                        valueCell.textContent = '-'; // Bukan angka, tampilkan sebagai kosong
-                        row.classList.add('incorrect-row'); // Highlight jika nilai tidak valid
+                        valueCell.textContent = '-';
+                        row.classList.add('incorrect-row');
                     }
                 } else {
-                    valueCell.textContent = '-'; // Tampilkan '-' untuk nilai yang kosong
-                    row.classList.add('incorrect-row'); // Highlight jika nilai hilang
+                    valueCell.textContent = '-';
+                    row.classList.add('incorrect-row');
                 }
 
-                if (highlightYellowRows.includes(aspect)) {
-                    row.classList.add('highlight-yellow');
-                }
-            });
-
-        } else {
-            alert('NISN tidak ditemukan. Harap periksa kembali.');
-        }
-    }
-
-    // Panggil fungsi pengambilan data saat halaman dimuat
-    fetchAndParseCSV();
-});
+                if (highlight
