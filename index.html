@@ -166,7 +166,7 @@
         </section>
 
         <section id="student-info" class="hidden">
-            <div class="info-item"><strong>Nama:</strong> <span id="nama-lengkap"></span></div>
+            <div class="info-item"><strong>Nama Lengkap:</strong> <span id="nama-lengkap"></span></div>
             <div class="info-item"><strong>NISN:</strong> <span id="nisn-info"></span></div>
             <div class="info-item"><strong>Kelas:</strong> <span id="kelas"></span></div>
             <div class="info-item"><strong>Predikat:</strong> <span id="predikat"></span></div>
@@ -182,91 +182,23 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <th>1</th>
-                        <td>LKS BAB 1</td>
-                        <td data-col="3"></td>
-                    </tr>
-                    <tr>
-                        <th>2</th>
-                        <td>LKS BAB 2</td>
-                        <td data-col="4"></td>
-                    </tr>
-                    <tr>
-                        <th>3</th>
-                        <td>LKS BAB 3</td>
-                        <td data-col="5"></td>
-                    </tr>
-                    <tr>
-                        <th>4</th>
-                        <td>CATATAN TUGAS BAB 1</td>
-                        <td data-col="6"></td>
-                    </tr>
-                    <tr>
-                        <th>5</th>
-                        <td>CATATAN TUGAS BAB 2</td>
-                        <td data-col="7"></td>
-                    </tr>
-                    <tr>
-                        <th>6</th>
-                        <td>CATATAN TUGAS BAB 3</td>
-                        <td data-col="8"></td>
-                    </tr>
-                    <tr>
-                        <th>7</th>
-                        <td>KETERAMPILAN BAB 1</td>
-                        <td data-col="9"></td>
-                    </tr>
-                    <tr>
-                        <th>8</th>
-                        <td>KETERAMPILAN BAB 2</td>
-                        <td data-col="10"></td>
-                    </tr>
-                    <tr>
-                        <th>9</th>
-                        <td>KETERAMPILAN BAB 3</td>
-                        <td data-col="11"></td>
-                    </tr>
-                    <tr>
-                        <th>10</th>
-                        <td>ATS LKS</td>
-                        <td data-col="12"></td>
-                    </tr>
-                    <tr>
-                        <th>11</th>
-                        <td>ATS ASLI</td>
-                        <td data-col="13"></td>
-                    </tr>
-                    <tr>
-                        <th>12</th>
-                        <td>ATS PERBAIKAN 25 SOAL</td>
-                        <td data-col="14"></td>
-                    </tr>
-                    <tr>
-                        <th>13</th>
-                        <td>AAS LKS</td>
-                        <td data-col="15"></td>
-                    </tr>
-                    <tr>
-                        <th>14</th>
-                        <td>AAS ASLI</td>
-                        <td data-col="16"></td>
-                    </tr>
-                    <tr class="highlight-blue">
-                        <th>15</th>
-                        <td>PENILAIAN HARIAN</td>
-                        <td data-col="17"></td>
-                    </tr>
-                    <tr class="highlight-blue">
-                        <th>16</th>
-                        <td>NILAI AKHIR ATS</td>
-                        <td data-col="18"></td>
-                    </tr>
-                    <tr class="highlight-blue">
-                        <th>17</th>
-                        <td>NILAI AKHIR AAS</td>
-                        <td data-col="19"></td>
-                    </tr>
+                    <tr><th>1</th><td>LKS BAB 1</td><td data-col="3"></td></tr>
+                    <tr><th>2</th><td>LKS BAB 2</td><td data-col="4"></td></tr>
+                    <tr><th>3</th><td>LKS BAB 3</td><td data-col="5"></td></tr>
+                    <tr><th>4</th><td>CATATAN TUGAS BAB 1</td><td data-col="6"></td></tr>
+                    <tr><th>5</th><td>CATATAN TUGAS BAB 2</td><td data-col="7"></td></tr>
+                    <tr><th>6</th><td>CATATAN TUGAS BAB 3</td><td data-col="8"></td></tr>
+                    <tr><th>7</th><td>KETERAMPILAN BAB 1</td><td data-col="9"></td></tr>
+                    <tr><th>8</th><td>KETERAMPILAN BAB 2</td><td data-col="10"></td></tr>
+                    <tr><th>9</th><td>KETERAMPILAN BAB 3</td><td data-col="11"></td></tr>
+                    <tr><th>10</th><td>ATS LKS</td><td data-col="12"></td></tr>
+                    <tr><th>11</th><td>ATS ASLI</td><td data-col="13"></td></tr>
+                    <tr><th>12</th><td>ATS PERBAIKAN 25 SOAL</td><td data-col="14"></td></tr>
+                    <tr><th>13</th><td>AAS LKS</td><td data-col="15"></td></tr>
+                    <tr><th>14</th><td>AAS ASLI</td><td data-col="16"></td></tr>
+                    <tr class="highlight-blue"><th>15</th><td>PENILAIAN HARIAN</td><td data-col="17"></td></tr>
+                    <tr class="highlight-blue"><th>16</th><td>NILAI AKHIR ATS</td><td data-col="18"></td></tr>
+                    <tr class="highlight-blue"><th>17</th><td>NILAI AKHIR AAS</td><td data-col="19"></td></tr>
                 </tbody>
             </table>
         </section>
@@ -275,10 +207,9 @@
     </div>
 
     <script>
-        const spreadsheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRs-RK5zrgpKBUJAKD6pCXmLAfqWgHDSyzY9rgAJMFnvzyO-iyyFRlqVKnhUQQlzJp_pPAAbJFQljX_/pub?gid=1829383988&single=true&output=csv'; // Ubah bagian 'edit?gid=...' menjadi 'pub?output=csv'
-        const sheetName = 'NILAI2';
-        const headerRow = 1;
-        const dataStartRow = 2;
+        const spreadsheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRs-RK5zrgpKBUJAKD6pCXmLAfqWgHDSyzY9rgAJMFnvzyO-iyyFRlqVKnhUQQlzJp_pPAAbJFQljX_/pub?gid=1829383988&single=true&output=csv'; // Pastikan ini adalah URL 'publish to web' Anda
+        const headerRow = 1; // Baris header berada di baris pertama spreadsheet
+        const dataStartRow = 2; // Data dimulai dari baris kedua spreadsheet
 
         async function ambilData() {
             const nisnInput = document.getElementById('nisn');
@@ -289,6 +220,7 @@
                 return;
             }
 
+            // Sembunyikan semua section dan tampilkan loading
             document.getElementById('login-section').classList.add('hidden');
             document.getElementById('loading').classList.remove('hidden');
             document.getElementById('student-info').classList.add('hidden');
@@ -296,75 +228,80 @@
 
             try {
                 const response = await fetch(spreadsheetUrl);
+                // Cek apakah respons OK (status 200)
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
                 const csvData = await response.text();
-                const rows = csvData.split('\n').map(row => row.split(','));
+                // Memisahkan baris dan kolom. Menghapus baris kosong di akhir.
+                const rows = csvData.split('\n').filter(row => row.trim() !== '').map(row => row.split(','));
 
-                if (rows.length <= headerRow) {
+                if (rows.length < headerRow) {
                     alert('Data spreadsheet tidak valid atau kosong.');
-                    document.getElementById('loading').classList.add('hidden');
-                    document.getElementById('login-section').classList.remove('hidden');
-                    return;
+                    return; // Keluar dari fungsi
                 }
 
-                const headers = rows[(headerRow - 1)].map(header => header.trim());
+                // Ambil header dari baris yang ditentukan
+                const headers = rows[headerRow - 1].map(header => header.trim());
+
+                // Pastikan indeks kolom ditemukan
                 const nisnColumnIndex = headers.indexOf('NISN');
                 const namaColumnIndex = headers.indexOf('NAMA LENGKAP');
                 const kelasColumnIndex = headers.indexOf('KELAS');
                 const predikatColumnIndex = headers.indexOf('PREDIKAT');
 
                 if (nisnColumnIndex === -1 || namaColumnIndex === -1 || kelasColumnIndex === -1 || predikatColumnIndex === -1) {
-                    alert('Kolom NISN, NAMA LENGKAP, KELAS, atau PREDIKAT tidak ditemukan di header spreadsheet.');
-                    document.getElementById('loading').classList.add('hidden');
-                    document.getElementById('login-section').classList.remove('hidden');
+                    alert('Kolom NAMA LENGKAP, NISN, KELAS, atau PREDIKAT tidak ditemukan di header spreadsheet. Pastikan penulisan sesuai.');
                     return;
                 }
 
                 let studentData = null;
+                // Mulai pencarian dari dataStartRow
                 for (let i = dataStartRow - 1; i < rows.length; i++) {
-                    if (rows.length > i && rows[(i)] && rows[(i)][nisnColumnIndex] && rows[(i)][nisnColumnIndex].trim() === nisn) {
-                        studentData = rows[(i)];
+                    const rowData = rows[i];
+                    if (rowData && rowData[nisnColumnIndex] && rowData[nisnColumnIndex].trim() === nisn) {
+                        studentData = rowData;
                         break;
                     }
                 }
 
+                // Sembunyikan loading setelah data diproses
                 document.getElementById('loading').classList.add('hidden');
 
                 if (studentData) {
+                    // Tampilkan info siswa
                     document.getElementById('student-info').classList.remove('hidden');
                     document.getElementById('nilai-table-container').classList.remove('hidden');
 
-                    document.getElementById('nama-lengkap').textContent = studentData[(namaColumnIndex)] || '-';
-                    document.getElementById('nisn-info').textContent = studentData[(nisnColumnIndex)] || '-';
-                    document.getElementById('kelas').textContent = studentData[(kelasColumnIndex)] || '-';
-                    document.getElementById('predikat').textContent = studentData[(predikatColumnIndex)] || '-';
+                    document.getElementById('nama-lengkap').textContent = studentData[namaColumnIndex] || '-';
+                    document.getElementById('nisn-info').textContent = studentData[nisnColumnIndex] || '-';
+                    document.getElementById('kelas').textContent = studentData[kelasColumnIndex] || '-';
+                    document.getElementById('predikat').textContent = studentData[predikatColumnIndex] || '-';
 
-                    const nilaiTds = document.querySelectorAll('#nilai-table tbody tr td');
+                    // Isi tabel nilai
+                    const nilaiTds = document.querySelectorAll('#nilai-table tbody td[data-col]');
                     nilaiTds.forEach(td => {
                         const colIndex = parseInt(td.dataset.col);
-                        if (studentData[(colIndex - 1)] !== undefined) {
-                            const nilai = studentData[(colIndex - 1)].trim();
-                            if (nilai === '') {
-                                td.textContent = '-';
-                                td.classList.add('highlight-red');
-                            } else {
-                                td.textContent = Math.round(parseFloat(nilai));
-                                td.classList.remove('highlight-red');
-                            }
+                        // Sesuaikan indeks kolom karena array JavaScript dimulai dari 0
+                        const nilai = studentData[colIndex - 1];
+
+                        if (nilai !== undefined && nilai.trim() !== '') {
+                            td.textContent = Math.round(parseFloat(nilai));
+                            td.classList.remove('highlight-red'); // Hapus highlight jika ada nilai
                         } else {
-                            td.textContent = '-';
-                            td.classList.add('highlight-red');
+                            td.textContent = '-'; // Tampilkan '-' jika nilai kosong atau tidak ada
+                            td.classList.add('highlight-red'); // Beri highlight merah
                         }
                     });
                 } else {
-                    alert(`NISN "${nisn}" tidak ditemukan.`);
-                    document.getElementById('login-section').classList.remove('hidden');
+                    alert(`NISN "${nisn}" tidak ditemukan dalam data.`);
+                    document.getElementById('login-section').classList.remove('hidden'); // Tampilkan kembali login
                 }
 
             } catch (error) {
                 console.error('Error fetching or processing data:', error);
-                alert('Terjadi kesalahan saat mengambil data.');
-                document.getElementById('loading').classList.add('hidden');
-                document.getElementById('login-section').classList.remove('hidden');
+                alert('Terjadi kesalahan saat mengambil atau memproses data. Mohon cek koneksi internet atau pastikan spreadsheet sudah dipublikasikan dengan benar.');
+                document.getElementById('login-section').classList.remove('hidden'); // Tampilkan kembali login
             }
         }
     </script>
