@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nilai Matematika</title>
+    <title>NILAI MATEMATIKA</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -133,6 +133,7 @@
 
         .highlight-yellow {
             background-color: var(--yellow) !important;
+            color: #333; /* Ensure text is readable on yellow */
         }
 
         #loading {
@@ -153,40 +154,37 @@
         <section id="login-section">
             <input type="text" id="nisn-input" placeholder="Masukkan NISN Anda">
             <button id="login-button">Login</button>
-            <p id="login-message" style="color: var(--red); margin-top: 10px;"></p>
         </section>
 
-        <section id="student-dashboard" class="hidden">
-            <div id="student-info">
-                <div class="info-item">
-                    <strong>NAMA LENGKAP:</strong> <span id="nama-lengkap"></span>
-                </div>
-                <div class="info-item">
-                    <strong>NISN:</strong> <span id="nisn"></span>
-                </div>
-                <div class="info-item">
-                    <strong>KELAS:</strong> <span id="kelas"></span>
-                </div>
-                <div class="info-item">
-                    <strong>PREDIKAT:</strong> <span id="predikat"></span>
-                </div>
-            </div>
+        <div id="loading">Memuat data...</div>
 
-            <div id="grades-table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ASPEK PENILAIAN</th>
-                            <th>NILAI</th>
-                        </tr>
-                    </thead>
-                    <tbody id="grades-table-body">
-                        </tbody>
-                </table>
+        <section id="student-info" class="hidden">
+            <div class="info-item">
+                <strong>NAMA LENGKAP : </strong> <span id="nama-lengkap"></span>
+            </div>
+            <div class="info-item">
+                <strong>NISN : </strong> <span id="nisn"></span>
+            </div>
+            <div class="info-item">
+                <strong>KELAS : </strong> <span id="kelas"></span>
+            </div>
+            <div class="info-item">
+                <strong>PREDIKAT : </strong> <span id="predikat"></span>
             </div>
         </section>
 
-        <div id="loading" class="hidden">Memuat data...</div>
+        <section id="grades-table-container" class="hidden">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ASPEK PENILAIAN</th>
+                        <th>NILAI</th>
+                    </tr>
+                </thead>
+                <tbody id="grades-table-body">
+                    </tbody>
+            </table>
+        </section>
     </div>
 
     <script src="script.js"></script>
