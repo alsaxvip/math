@@ -121,6 +121,11 @@
             font-size: 0.9em; /* Slightly smaller font for better fit */
         }
 
+        table tbody th { /* Menargetkan header kolom NOMOR di tbody */
+            background-color: var(--green); /* Samakan warnanya dengan thead th */
+            color: var(--white);
+        }
+
         table td {
             font-size: 0.9em;
         }
@@ -182,23 +187,23 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr><th>1</th><td>LKS BAB 1</td><td data-col="3"></td></tr>
-                    <tr><th>2</th><td>LKS BAB 2</td><td data-col="4"></td></tr>
-                    <tr><th>3</th><td>LKS BAB 3</td><td data-col="5"></td></tr>
-                    <tr><th>4</th><td>CATATAN TUGAS BAB 1</td><td data-col="6"></td></tr>
-                    <tr><th>5</th><td>CATATAN TUGAS BAB 2</td><td data-col="7"></td></tr>
-                    <tr><th>6</th><td>CATATAN TUGAS BAB 3</td><td data-col="8"></td></tr>
-                    <tr><th>7</th><td>KETERAMPILAN BAB 1</td><td data-col="9"></td></tr>
-                    <tr><th>8</th><td>KETERAMPILAN BAB 2</td><td data-col="10"></td></tr>
-                    <tr><th>9</th><td>KETERAMPILAN BAB 3</td><td data-col="11"></td></tr>
-                    <tr><th>10</th><td>ATS LKS</td><td data-col="12"></td></tr>
-                    <tr><th>11</th><td>ATS ASLI</td><td data-col="13"></td></tr>
-                    <tr><th>12</th><td>ATS PERBAIKAN 25 SOAL</td><td data-col="14"></td></tr>
-                    <tr><th>13</th><td>AAS LKS</td><td data-col="15"></td></tr>
-                    <tr><th>14</th><td>AAS ASLI</td><td data-col="16"></td></tr>
-                    <tr class="highlight-blue"><th>15</th><td>PENILAIAN HARIAN</td><td data-col="17"></td></tr>
-                    <tr class="highlight-blue"><th>16</th><td>NILAI AKHIR ATS</td><td data-col="18"></td></tr>
-                    <tr class="highlight-blue"><th>17</th><td>NILAI AKHIR AAS</td><td data-col="19"></td></tr>
+                    <tr><th>1</th><td>LKS BAB 1</td><td data-nilai-row="1"></td></tr>
+                    <tr><th>2</th><td>LKS BAB 2</td><td data-nilai-row="2"></td></tr>
+                    <tr><th>3</th><td>LKS BAB 3</td><td data-nilai-row="3"></td></tr>
+                    <tr><th>4</th><td>CATATAN TUGAS BAB 1</td><td data-nilai-row="4"></td></tr>
+                    <tr><th>5</th><td>CATATAN TUGAS BAB 2</td><td data-nilai-row="5"></td></tr>
+                    <tr><th>6</th><td>CATATAN TUGAS BAB 3</td><td data-nilai-row="6"></td></tr>
+                    <tr><th>7</th><td>KETERAMPILAN BAB 1</td><td data-nilai-row="7"></td></tr>
+                    <tr><th>8</th><td>KETERAMPILAN BAB 2</td><td data-nilai-row="8"></td></tr>
+                    <tr><th>9</th><td>KETERAMPILAN BAB 3</td><td data-nilai-row="9"></td></tr>
+                    <tr><th>10</th><td>ATS LKS</td><td data-nilai-row="10"></td></tr>
+                    <tr><th>11</th><td>ATS ASLI</td><td data-nilai-row="11"></td></tr>
+                    <tr><th>12</th><td>ATS PERBAIKAN 25 SOAL</td><td data-nilai-row="12"></td></tr>
+                    <tr><th>13</th><td>AAS LKS</td><td data-nilai-row="13"></td></tr>
+                    <tr><th>14</th><td>AAS ASLI</td><td data-nilai-row="14"></td></tr>
+                    <tr class="highlight-blue"><th>15</th><td>PENILAIAN HARIAN</td><td data-nilai-row="15"></td></tr>
+                    <tr class="highlight-blue"><th>16</th><td>NILAI AKHIR ATS</td><td data-nilai-row="16"></td></tr>
+                    <tr class="highlight-blue"><th>17</th><td>NILAI AKHIR AAS</td><td data-nilai-row="17"></td></tr>
                 </tbody>
             </table>
         </section>
@@ -207,9 +212,10 @@
     </div>
 
     <script>
-        const spreadsheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRs-RK5zrgpKBUJAKD6pCXmLAfqWgHDSyzY9rgAJMFnvzyO-iyyFRlqVKnhUQQlzJp_pPAAbJFQljX_/pub?gid=1829383988&single=true&output=csv'; // Pastikan ini adalah URL 'publish to web' Anda
+        const spreadsheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRk7V38y-yK9Lg_xX7yJ3i4s4nQ8nQ2s3mYv5J7g9g8v8L7pW3o0Z9dG9mN0lE9A/pub?output=csv'; // Pastikan ini adalah URL 'publish to web' Anda
         const headerRow = 1; // Baris header berada di baris pertama spreadsheet
         const dataStartRow = 2; // Data dimulai dari baris kedua spreadsheet
+        const nilaiColumnIndex = 4; // Kolom E adalah indeks 4 (A=0, B=1, C=2, D=3, E=4)
 
         async function ambilData() {
             const nisnInput = document.getElementById('nisn');
@@ -238,6 +244,8 @@
 
                 if (rows.length < headerRow) {
                     alert('Data spreadsheet tidak valid atau kosong.');
+                    document.getElementById('loading').classList.add('hidden');
+                    document.getElementById('login-section').classList.remove('hidden');
                     return; // Keluar dari fungsi
                 }
 
@@ -252,6 +260,8 @@
 
                 if (nisnColumnIndex === -1 || namaColumnIndex === -1 || kelasColumnIndex === -1 || predikatColumnIndex === -1) {
                     alert('Kolom NAMA LENGKAP, NISN, KELAS, atau PREDIKAT tidak ditemukan di header spreadsheet. Pastikan penulisan sesuai.');
+                    document.getElementById('loading').classList.add('hidden');
+                    document.getElementById('login-section').classList.remove('hidden');
                     return;
                 }
 
@@ -278,12 +288,13 @@
                     document.getElementById('kelas').textContent = studentData[kelasColumnIndex] || '-';
                     document.getElementById('predikat').textContent = studentData[predikatColumnIndex] || '-';
 
-                    // Isi tabel nilai
-                    const nilaiTds = document.querySelectorAll('#nilai-table tbody td[data-col]');
+                    // Isi tabel nilai dari kolom E (indeks 4)
+                    const nilaiTds = document.querySelectorAll('#nilai-table tbody td[data-nilai-row]');
                     nilaiTds.forEach(td => {
-                        const colIndex = parseInt(td.dataset.col);
-                        // Sesuaikan indeks kolom karena array JavaScript dimulai dari 0
-                        const nilai = studentData[colIndex - 1];
+                        const rowIndexInSpreadsheet = parseInt(td.dataset.nilaiRow); // Ini adalah nomor baris data nilai di spreadsheet (misal, 1 untuk LKS BAB 1)
+                        
+                        // Kolom E (indeks 4) dari setiap baris data siswa yang ditemukan
+                        const nilai = studentData[nilaiColumnIndex + (rowIndexInSpreadsheet -1)]; // Ambil nilai dari kolom E
 
                         if (nilai !== undefined && nilai.trim() !== '') {
                             td.textContent = Math.round(parseFloat(nilai));
