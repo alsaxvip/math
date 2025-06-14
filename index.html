@@ -162,12 +162,14 @@
         </header>
 
         <section id="login-section">
-            <input type="text" id="nisn-input" placeholder="Masukkan NISN"> <button onclick="ambilData()">Lihat Nilai</button>
+            <input type="text" id="nisn-input" placeholder="Masukkan NISN"> 
+            <button onclick="ambilData()">Lihat Nilai</button>
         </section>
 
         <section id="student-info" class="hidden">
             <div class="info-item"><strong>NAMA LENGKAP : </strong> <span id="nama-lengkap"></span></div>
-            <div class="info-item"><strong>NISN : </strong> <span id="nisn-display"></span></div> <div class="info-item"><strong>KELAS : </strong> <span id="kelas"></span></div>
+            <div class="info-item"><strong>NISN : </strong> <span id="nisn-display"></span></div>
+            <div class="info-item"><strong>KELAS : </strong> <span id="kelas"></span></div>
             <div class="info-item"><strong>PREDIKAT : </strong> <span id="predikat"></span></div> </section>
 
         <section id="nilai-table-container" class="hidden">
@@ -208,7 +210,11 @@
         const headerRow = 1; // Baris header berada di baris pertama spreadsheet
         const dataStartRow = 2; // Data dimulai dari baris kedua spreadsheet
         const nilaiColumnStartIndex = 4; // Kolom E adalah indeks 4 (A=0, B=1, C=2, D=3, E=4)
-
+        
+        async function ambilData() {
+            console.log("Fungsi ambilData() terpanggil!"); // TAMBAHKAN INI
+            const nisnInput = document.getElementById('nisn-input');
+            
         async function ambilData() {
             const nisnInput = document.getElementById('nisn-input'); // Get value from the new ID
             const nisn = nisnInput.value.trim();
