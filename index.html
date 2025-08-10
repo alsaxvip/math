@@ -175,6 +175,9 @@
             <div class="info-item">
                 <strong>PREDIKAT :</strong> <span id="student-predicate"></span>
             </div>
+            <div class="info-item">
+                <strong>LOGIN :</strong> <span id="student-attendance"></span>
+            </div>
             </section>
         </section>
         
@@ -214,23 +217,23 @@
         // Mapping for assessment aspects and their corresponding column indices (0-indexed)
         // Assuming columns A-D for student info, E onwards for grades
         const assessmentAspects = [
-            { label: 'LKS BAB 1', colIndex: 4 },
-            { label: 'LKS BAB 2', colIndex: 5 },
-            { label: 'LKS BAB 3', colIndex: 6 },
-            { label: 'CATATAN TUGAS BAB 1', colIndex: 7 },
-            { label: 'CATATAN TUGAS BAB 2', colIndex: 8 },
-            { label: 'CATATAN TUGAS BAB 3', colIndex: 9 },
-            { label: 'KETERAMPILAN BAB 1', colIndex: 10 },
-            { label: 'KETERAMPILAN BAB 2', colIndex: 11 },
-            { label: 'KETERAMPILAN BAB 3', colIndex: 12 },
-            { label: 'ATS LKS', colIndex: 13 },
-            { label: 'ATS ASLI', colIndex: 14 },
-            { label: 'ATS PERBAIKAN 25 SOAL', colIndex: 15 },
-            { label: 'AAS LKS', colIndex: 16 },
-            { label: 'AAS ASLI', colIndex: 17 },
-            { label: 'PENILAIAN HARIAN', colIndex: 18, highlight: 'yellow' },
-            { label: 'NILAI AKHIR ATS', colIndex: 19, highlight: 'yellow' },
-            { label: 'NILAI AKHIR AAS', colIndex: 20, highlight: 'yellow' }
+            { label: 'LKS BAB 1', colIndex: 5 },
+            { label: 'LKS BAB 2', colIndex: 6 },
+            { label: 'LKS BAB 3', colIndex: 7 },
+            { label: 'CATATAN TUGAS BAB 1', colIndex: 8 },
+            { label: 'CATATAN TUGAS BAB 2', colIndex: 9 },
+            { label: 'CATATAN TUGAS BAB 3', colIndex: 10 },
+            { label: 'KETERAMPILAN BAB 1', colIndex: 11 },
+            { label: 'KETERAMPILAN BAB 2', colIndex: 12 },
+            { label: 'KETERAMPILAN BAB 3', colIndex: 13 },
+            { label: 'ATS LKS', colIndex: 14 },
+            { label: 'ATS ASLI', colIndex: 15 },
+            { label: 'ATS PERBAIKAN 25 SOAL', colIndex: 16 },
+            { label: 'AAS LKS', colIndex: 17 },
+            { label: 'AAS ASLI', colIndex: 18 },
+            { label: 'PENILAIAN HARIAN', colIndex: 19, highlight: 'yellow' },
+            { label: 'NILAI AKHIR ATS', colIndex: 20, highlight: 'yellow' },
+            { label: 'NILAI AKHIR AAS', colIndex: 21, highlight: 'yellow' }
         ];
 
         async function fetchCSVData() {
@@ -288,6 +291,7 @@
                 studentNisn.textContent = student.NISN;
                 studentClass.textContent = student.KELAS;
                 studentPredicate.textContent = student.PREDIKAT;
+                studentAttendance.textContent = student.LOGIN;
 
                 gradesTableBody.innerHTML = ''; // Clear previous data
 
