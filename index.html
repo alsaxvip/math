@@ -213,6 +213,7 @@
         const studentNisn = document.getElementById('student-nisn');
         const studentClass = document.getElementById('student-class');
         const studentPredicate = document.getElementById('student-predicate');
+        const studentAttendance = document.getElementById('student-attendance');
 
         // Mapping for assessment aspects and their corresponding column indices (0-indexed)
         // Assuming columns A-D for student info, E onwards for grades
@@ -272,7 +273,8 @@
                         'NISN': values[1].trim(),
                         'KELAS': values[2].trim(),
                         'PREDIKAT': values[3].trim(),
-                        'grades': values.slice(4).map(val => val.trim()) // Grades start from column E (index 4)
+                        'LOGIN': values[4].trim(),
+                        'grades': values.slice(5).map(val => val.trim()) // Grades start from column E (index 4)
                     });
                 }
             }
@@ -302,7 +304,7 @@
 
                     aspectCell.textContent = aspect.label;
 
-                    const grade = student.grades[aspect.colIndex - 4]; // Adjust index because 'grades' array starts from column E (index 4 in original CSV)
+                    const grade = student.grades[aspect.colIndex - 5]; // Adjust index because 'grades' array starts from column E (index 4 in original CSV)
                     let displayValue = '';
 
                     if (grade === undefined || grade === null || grade === '') {
